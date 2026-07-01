@@ -33,7 +33,7 @@ interface TwinState {
 }
 
 export const useTwinStore = create<TwinState>((set) => ({
-  selectedCode: "전남", // 기본: 최고 사각지대 지역
+  selectedCode: "울산", // 기본: 실측 최저 밀도·최고 사각지대 지역
   mode: "현황",
   addInstructors: 0,
   addPrograms: 0,

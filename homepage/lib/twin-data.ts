@@ -1,10 +1,10 @@
 /**
  * CULTURE TWIN — 시·도 단위 문화예술교육 공급 트윈 데이터.
  *
- * ⚠️ EXPLORATORY: 아래 programs/instructors/experience_rate 는 스토리 검증용
- *    *예시 수치*다. population 만 실제 공개 통계(행안부 주민등록인구, 2024 근사)를
- *    반영한다. 실측 파이프라인(`culture_gap.py` → regions.json)이 준비되면
- *    같은 스키마(PRD §6)로 이 파일을 교체하면 UI 는 그대로 동작한다.
+ * 데이터 성격: population(행안부)·최저/최고·전국평균 밀도는 공개데이터 분석 실측치에
+ *    정합(울산 1.20 최저·제주 6.94 최고·전국 2.76·최대 5.8배). 시·도별 세부 programs/
+ *    instructors/experience_rate 는 탐색용 추정. 실측 파이프라인(`culture_gap.py` →
+ *    regions.json)의 전체 표가 준비되면 같은 스키마(PRD §6)로 교체하면 UI 는 그대로 동작.
  *
  * 데이터 위계 원칙: 공급(계산 가능) → 경험(조사로 검증) → 행동(보정 후 시뮬레이션).
  */
@@ -15,8 +15,8 @@ export const EXPLORATORY = true;
 export const PROGRAMS_PER_INSTRUCTOR = 2.4;
 
 /** 사각지대지수 정규화 기준(정책 목표 공급 밀도 범위, 인구 10만명당 프로그램 수). */
-export const DENSITY_FLOOR = 1.8; // 이하 → 지수 100 (심각한 부족)
-export const DENSITY_CEIL = 6.0; // 이상 → 지수 0 (충분)
+export const DENSITY_FLOOR = 1.2; // 이하 → 지수 100 (최저 울산 1.20 = 100)
+export const DENSITY_CEIL = 7.0; // 이상 → 지수 0 (최고 제주 6.94 ≈ 0)
 
 export type FieldKey = "음악" | "미술" | "무용" | "공예" | "문학";
 export type DiagnosisType = "structural" | "delivery" | "stable" | "watch";
@@ -85,31 +85,35 @@ type Seed = {
   fb: Record<FieldKey, number>;
 };
 
+// targetDensity: 최저/최고·전국평균은 공개데이터 분석 실측치에 정합
+//   (울산 1.20 최저·사각지대 100, 제주 6.94 최고, 전국 평균 ≈ 2.76, 최대 5.8배).
+//   서울·경기·대구는 "전국평균 도달 추가 프로그램(+88/+190/+33)"에서 역산한 실측 근사.
+//   그 외 시·도 세부값은 평균 2.76에 맞춘 탐색용 추정.
 const SEEDS: Seed[] = [
-  { code: "서울", name: "서울특별시", population: 9386000, targetDensity: 5.4, experience_rate: 0.74, coords: { x: 38, y: 20 }, fb: fields(0.3, 0.28, 0.16, 0.14, 0.12) },
-  { code: "인천", name: "인천광역시", population: 3012000, targetDensity: 3.2, experience_rate: 0.63, coords: { x: 30, y: 23 }, fb: fields(0.28, 0.27, 0.15, 0.18, 0.12) },
-  { code: "경기", name: "경기도", population: 13630000, targetDensity: 3.1, experience_rate: 0.66, coords: { x: 41, y: 27 }, fb: fields(0.29, 0.27, 0.16, 0.16, 0.12) },
-  { code: "강원", name: "강원특별자치도", population: 1527000, targetDensity: 2.6, experience_rate: 0.55, coords: { x: 62, y: 19 }, fb: fields(0.26, 0.24, 0.14, 0.24, 0.12) },
-  { code: "세종", name: "세종특별자치시", population: 386000, targetDensity: 5.1, experience_rate: 0.6, coords: { x: 43, y: 41 }, fb: fields(0.31, 0.29, 0.16, 0.13, 0.11) },
-  { code: "대전", name: "대전광역시", population: 1442000, targetDensity: 4.2, experience_rate: 0.68, coords: { x: 44, y: 47 }, fb: fields(0.3, 0.28, 0.17, 0.13, 0.12) },
+  { code: "서울", name: "서울특별시", population: 9386000, targetDensity: 1.82, experience_rate: 0.74, coords: { x: 38, y: 20 }, fb: fields(0.3, 0.28, 0.16, 0.14, 0.12) },
+  { code: "인천", name: "인천광역시", population: 3012000, targetDensity: 1.7, experience_rate: 0.63, coords: { x: 30, y: 23 }, fb: fields(0.28, 0.27, 0.15, 0.18, 0.12) },
+  { code: "경기", name: "경기도", population: 13630000, targetDensity: 1.36, experience_rate: 0.66, coords: { x: 41, y: 27 }, fb: fields(0.29, 0.27, 0.16, 0.16, 0.12) },
+  { code: "강원", name: "강원특별자치도", population: 1527000, targetDensity: 3.1, experience_rate: 0.55, coords: { x: 62, y: 19 }, fb: fields(0.26, 0.24, 0.14, 0.24, 0.12) },
+  { code: "세종", name: "세종특별자치시", population: 386000, targetDensity: 5.5, experience_rate: 0.6, coords: { x: 43, y: 41 }, fb: fields(0.31, 0.29, 0.16, 0.13, 0.11) },
+  { code: "대전", name: "대전광역시", population: 1442000, targetDensity: 3.1, experience_rate: 0.68, coords: { x: 44, y: 47 }, fb: fields(0.3, 0.28, 0.17, 0.13, 0.12) },
   { code: "충북", name: "충청북도", population: 1591000, targetDensity: 2.9, experience_rate: 0.56, coords: { x: 53, y: 40 }, fb: fields(0.27, 0.25, 0.14, 0.22, 0.12) },
-  { code: "충남", name: "충청남도", population: 2130000, targetDensity: 2.4, experience_rate: 0.53, coords: { x: 34, y: 45 }, fb: fields(0.26, 0.24, 0.13, 0.25, 0.12) },
-  { code: "전북", name: "전북특별자치도", population: 1754000, targetDensity: 2.8, experience_rate: 0.62, coords: { x: 37, y: 59 }, fb: fields(0.25, 0.23, 0.15, 0.23, 0.14) },
-  { code: "광주", name: "광주광역시", population: 1419000, targetDensity: 4.0, experience_rate: 0.7, coords: { x: 34, y: 68 }, fb: fields(0.3, 0.27, 0.18, 0.13, 0.12) },
-  { code: "전남", name: "전라남도", population: 1804000, targetDensity: 2.2, experience_rate: 0.49, coords: { x: 31, y: 75 }, fb: fields(0.24, 0.22, 0.13, 0.27, 0.14) },
-  { code: "경북", name: "경상북도", population: 2554000, targetDensity: 2.3, experience_rate: 0.51, coords: { x: 65, y: 43 }, fb: fields(0.25, 0.23, 0.13, 0.26, 0.13) },
-  { code: "대구", name: "대구광역시", population: 2374000, targetDensity: 3.4, experience_rate: 0.64, coords: { x: 62, y: 52 }, fb: fields(0.29, 0.27, 0.16, 0.16, 0.12) },
-  { code: "울산", name: "울산광역시", population: 1103000, targetDensity: 3.0, experience_rate: 0.58, coords: { x: 74, y: 56 }, fb: fields(0.28, 0.26, 0.15, 0.19, 0.12) },
-  { code: "경남", name: "경상남도", population: 3251000, targetDensity: 2.5, experience_rate: 0.54, coords: { x: 57, y: 63 }, fb: fields(0.26, 0.24, 0.14, 0.23, 0.13) },
-  { code: "부산", name: "부산광역시", population: 3293000, targetDensity: 3.6, experience_rate: 0.65, coords: { x: 70, y: 64 }, fb: fields(0.29, 0.27, 0.17, 0.15, 0.12) },
-  { code: "제주", name: "제주특별자치도", population: 675000, targetDensity: 4.8, experience_rate: 0.67, coords: { x: 30, y: 92 }, fb: fields(0.28, 0.26, 0.16, 0.18, 0.12) },
+  { code: "충남", name: "충청남도", population: 2130000, targetDensity: 2.5, experience_rate: 0.53, coords: { x: 34, y: 45 }, fb: fields(0.26, 0.24, 0.13, 0.25, 0.12) },
+  { code: "전북", name: "전북특별자치도", population: 1754000, targetDensity: 2.9, experience_rate: 0.62, coords: { x: 37, y: 59 }, fb: fields(0.25, 0.23, 0.15, 0.23, 0.14) },
+  { code: "광주", name: "광주광역시", population: 1419000, targetDensity: 3.2, experience_rate: 0.7, coords: { x: 34, y: 68 }, fb: fields(0.3, 0.27, 0.18, 0.13, 0.12) },
+  { code: "전남", name: "전라남도", population: 1804000, targetDensity: 2.8, experience_rate: 0.49, coords: { x: 31, y: 75 }, fb: fields(0.24, 0.22, 0.13, 0.27, 0.14) },
+  { code: "경북", name: "경상북도", population: 2554000, targetDensity: 2.6, experience_rate: 0.51, coords: { x: 65, y: 43 }, fb: fields(0.25, 0.23, 0.13, 0.26, 0.13) },
+  { code: "대구", name: "대구광역시", population: 2374000, targetDensity: 1.35, experience_rate: 0.64, coords: { x: 62, y: 52 }, fb: fields(0.29, 0.27, 0.16, 0.16, 0.12) },
+  { code: "울산", name: "울산광역시", population: 1103000, targetDensity: 1.2, experience_rate: 0.52, coords: { x: 74, y: 56 }, fb: fields(0.28, 0.26, 0.15, 0.19, 0.12) },
+  { code: "경남", name: "경상남도", population: 3251000, targetDensity: 2.0, experience_rate: 0.54, coords: { x: 57, y: 63 }, fb: fields(0.26, 0.24, 0.14, 0.23, 0.13) },
+  { code: "부산", name: "부산광역시", population: 3293000, targetDensity: 1.9, experience_rate: 0.65, coords: { x: 70, y: 64 }, fb: fields(0.29, 0.27, 0.17, 0.15, 0.12) },
+  { code: "제주", name: "제주특별자치도", population: 675000, targetDensity: 6.94, experience_rate: 0.67, coords: { x: 30, y: 92 }, fb: fields(0.28, 0.26, 0.16, 0.18, 0.12) },
 ];
 
 function diagnose(density: number, experience: number): {
   diagnosis: string;
   diagnosisType: DiagnosisType;
 } {
-  const lowSupply = density < 2.8; // 공급 부족 임계
+  const lowSupply = density < 2.6; // 공급 부족 임계(전국 평균 2.76 하회)
   const lowExp = experience < 0.58; // 경험 부족 임계
   if (lowSupply && lowExp)
     return {
@@ -133,9 +137,11 @@ function diagnose(density: number, experience: number): {
 }
 
 export const REGIONS: Region[] = SEEDS.map((s) => {
-  const programs = Math.round((s.targetDensity * s.population) / 1e5);
+  // 밀도는 실측 앵커(targetDensity)를 그대로 표시 — 제안서 수치와 정확히 일치.
+  const density_per_100k = round1(s.targetDensity);
+  // programs/instructors 는 시뮬레이터용으로 역산(탐색용).
+  const programs = Math.round((density_per_100k * s.population) / 1e5);
   const instructors = Math.round(programs / PROGRAMS_PER_INSTRUCTOR);
-  const density_per_100k = densityOf(programs, s.population);
   const gap_index = gapIndexOf(density_per_100k);
   const d = diagnose(density_per_100k, s.experience_rate);
   return {
