@@ -84,7 +84,9 @@ export function TwinMapStreet() {
       if (!g) continue;
       const el = document.createElement("div");
       el.style.cursor = "pointer";
-      el.style.position = "relative";
+      // NOTE: position 을 건드리지 않는다. MapLibre 의 `.maplibregl-marker`
+      // 클래스가 position:absolute + transform 으로 좌표에 고정하는데, 인라인
+      // position:relative 로 덮으면 마커가 문서 흐름에 쌓여 남쪽으로 흘러내린다.
       el.setAttribute("data-code", r.code);
       el.setAttribute("role", "button");
       el.setAttribute("aria-label", `${r.name} 지도에서 선택`);
