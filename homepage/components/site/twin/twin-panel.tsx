@@ -107,11 +107,11 @@ export function TwinPanel() {
           인구 <span className="font-mono text-white/75">{fmt(region.population)}</span>
         </span>
         <span>
-          경험률{" "}
+          교육경험률{" "}
           <span className="font-mono text-white/75">
             {Math.round(region.experience_rate * 100)}%
           </span>
-          <span className="ml-1 text-white/30">(조사·선택)</span>
+          <span className="ml-1 text-white/30">(Q9·실측)</span>
         </span>
       </div>
 
