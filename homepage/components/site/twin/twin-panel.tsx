@@ -117,7 +117,7 @@ export function TwinPanel() {
 
       {/* field breakdown */}
       <div className="mt-6">
-        <div className="kicker mb-3 text-white/40">분야 구성</div>
+        <div className="kicker mb-3 text-white/40">분야 구성 <span className="text-white/25">(예시)</span></div>
         <div className="flex h-2.5 w-full overflow-hidden rounded-full">
           {(Object.keys(region.field_breakdown) as FieldKey[]).map((k) => (
             <div

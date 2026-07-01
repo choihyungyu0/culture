@@ -31,7 +31,7 @@ export function TwinControls() {
   function exportBrief() {
     if (!region || !sim) return;
     const lines = [
-      "CULTURE TWIN — 정책 개입 근거자료 (탐색용·예시)",
+      "CULTURE TWIN — 정책 개입 근거자료 (실측 데이터 + 규칙기반 시뮬레이션)",
       "=".repeat(48),
       `지역: ${region.name} (${region.code})`,
       `개입안: 예술강사 +${addInstructors}명, 프로그램 +${addPrograms}개`,
@@ -67,7 +67,7 @@ export function TwinControls() {
     <div className="instrument-panel rounded-2xl p-6 lg:p-7">
       <div className="flex items-center justify-between gap-3">
         <div className="kicker text-white/40">Intervention Simulator</div>
-        <span className="badge-exploratory">탐색용 · 예시</span>
+        <span className="badge-exploratory">시뮬레이션 · 규칙기반</span>
       </div>
 
       {/* mode toggle */}

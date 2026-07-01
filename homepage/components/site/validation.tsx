@@ -28,7 +28,10 @@ export function Validation() {
             </Reveal>
           </div>
           <Reveal delay={0.15}>
-            <span className="badge-exploratory scale-125">탐색용 · 예시</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-mint/10 px-4 py-1.5 font-mono text-sm text-mint ring-1 ring-mint/30">
+              <span className="h-1.5 w-1.5 rounded-full bg-mint" aria-hidden />
+              공개데이터 실증
+            </span>
           </Reveal>
         </div>
 
