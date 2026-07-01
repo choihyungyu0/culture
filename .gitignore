@@ -1,0 +1,17 @@
+# Claude Code local config
+.claude/
+
+# dependencies / build output (also declared in Homepage/.gitignore)
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+
+# secrets — NEVER commit (also declared in Homepage/.gitignore)
+.env
+**/.env
+**/.env*.local
+
+# OS / editor
+.DS_Store
+Thumbs.db

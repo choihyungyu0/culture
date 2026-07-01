@@ -1,0 +1,467 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────
+   CULTURE TWIN — design system
+   두 세계: porcelain(밝은 브랜드/시민) ↔ ink instrument(어두운 데이터 트윈)
+   데이터=빛(밀도=휘도·크기) · 격차=열(heat 주황)
+   ───────────────────────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* brand palette → Tailwind utilities (bg-rose, text-mint, border-violet …) */
+  --color-ink: var(--ink);
+  --color-porcelain: var(--porcelain);
+  --color-paper: var(--porcelain);
+  --color-brand: var(--brand);
+  --color-rose: var(--rose);
+  --color-rose-deep: var(--rose-deep);
+  --color-mint: var(--mint);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-heat: var(--heat);
+
+  --font-sans: var(--font-sans-stack);
+  --font-display: var(--font-display-stack);
+  --font-mono: var(--font-mono-stack);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* core two-world tokens */
+  --ink: #16121a;
+  --porcelain: #f6f2ef;
+
+  /* accents */
+  --rose: #ff4fa0;
+  --rose-deep: #e5267e;
+  --mint: #7fd9cc;
+  --violet: #8a4bd8;
+  --violet-soft: #b47cf0;
+  --heat: #ff7a36;
+
+  /* light (porcelain) surface theme — default */
+  --background: #f6f2ef;
+  --foreground: #16121a;
+  --card: #fffdfb;
+  --card-foreground: #16121a;
+  --popover: #fffdfb;
+  --popover-foreground: #16121a;
+  --primary: #16121a;
+  --primary-foreground: #f6f2ef;
+  --secondary: #ece5df;
+  --secondary-foreground: #16121a;
+  --muted: #ece5df;
+  --muted-foreground: #6b6270;
+  --accent: #efe8e2;
+  --accent-foreground: #16121a;
+  --destructive: #e5267e;
+  --border: rgba(22, 18, 26, 0.12);
+  --input: rgba(22, 18, 26, 0.18);
+  --ring: #e5267e;
+
+  /* kicker / label accent — rose-deep reads on porcelain */
+  --brand: #e5267e;
+
+  --font-sans-stack: var(--font-pretendard), "Pretendard Variable", Pretendard,
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  /* Syne — Latin display only (no KR glyphs → falls back to Pretendard) */
+  --font-display-stack: var(--font-syne), var(--font-pretendard), ui-sans-serif,
+    system-ui, sans-serif;
+  /* Space Mono — labels / data */
+  --font-mono-stack: var(--font-space-mono), ui-monospace, "SFMono-Regular",
+    Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* native scroll (buttery, GPU-accelerated); smooth only for anchor jumps */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans-stack);
+    font-feature-settings: "ss01", "cv01", "tnum";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Korean: break between words, never mid-word */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    word-break: keep-all;
+    font-weight: 800;
+  }
+
+  ::selection {
+    background: var(--rose);
+    color: #fff;
+  }
+
+  /* Keyboard focus indicator — the site hides the native cursor, so a strong,
+     consistent focus ring is the primary affordance for keyboard users. Rose
+     stays visible on both porcelain and ink sections. */
+  :where(a, button, [role="button"], input, [tabindex]):focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer utilities {
+  /* eyebrow / kicker label — technical, monospaced (Space Mono) */
+  .kicker {
+    font-family: var(--font-mono-stack);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  /* Latin display face (Syne) — wordmark, latin accents, big numerals */
+  .font-display {
+    font-family: var(--font-display-stack);
+    letter-spacing: -0.01em;
+  }
+
+  /* data / numeric label face (Space Mono) */
+  .font-mono,
+  .data-mono {
+    font-family: var(--font-mono-stack);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* big editorial display scale — Pretendard heavy (KR-safe) */
+  .display {
+    font-family: var(--font-sans-stack);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  /* ── '탐색용' badge — honest, non-alarming heat pill ── */
+  .badge-exploratory {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono-stack);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.28em 0.7em;
+    border-radius: 9999px;
+    color: var(--heat);
+    background: color-mix(in srgb, var(--heat) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--heat) 34%, transparent);
+  }
+  .badge-exploratory::before {
+    content: "";
+    width: 0.42em;
+    height: 0.42em;
+    border-radius: 9999px;
+    background: var(--heat);
+    box-shadow: 0 0 8px var(--heat);
+  }
+
+  /* ── instrument (dark data twin) glass panel ── */
+  .instrument-panel {
+    background:
+      radial-gradient(120% 120% at 0% 0%, rgba(138, 75, 216, 0.12), transparent 55%),
+      rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  /* keyword glint — white text, rose→violet light sweeps across, then rests */
+  .shimmer {
+    background-image: linear-gradient(
+      100deg,
+      #ffffff 0%,
+      #ffffff 42%,
+      var(--rose) 50%,
+      var(--violet-soft) 54%,
+      #ffffff 62%,
+      #ffffff 100%
+    );
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: text-shimmer 5s ease-in-out infinite;
+  }
+  @keyframes text-shimmer {
+    0% {
+      background-position: 150% 0;
+    }
+    45%,
+    100% {
+      background-position: -50% 0;
+    }
+  }
+
+  /* hairline divider */
+  .rule {
+    border-color: var(--border);
+  }
+}
+
+/* ── sacrifice / blind-spot heat pulse (twin high-gap nodes) ── */
+@keyframes gap-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+.gap-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: gap-pulse 2.4s ease-in-out infinite;
+}
+
+/* ── intervention wave ring (what-if slider feedback) ── */
+@keyframes twin-wave {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+.twin-wave {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twin-wave 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Custom cursor ── */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 9999px;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  background: #fff;
+}
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1px solid #fff;
+  transition:
+    width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.28s ease;
+}
+.cursor-hover .cursor-ring {
+  width: 68px;
+  height: 68px;
+  margin: -34px 0 0 -34px;
+  background-color: rgba(255, 255, 255, 0.18);
+}
+@media (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* ── Film grain texture ── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Monochrome editorial grading (opt-in for imagery) ── */
+.img-graded {
+  filter: grayscale(1) contrast(1.08) brightness(0.92);
+}
+
+/* ── Typewriter caret ── */
+.type-caret {
+  display: inline-block;
+  width: 1px;
+  height: 1.05em;
+  margin-left: 0.06em;
+  vertical-align: -0.16em;
+  background: currentColor;
+  animation: caret-blink 1.05s steps(1) infinite;
+}
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── CHOREOS aurora glow (rose · violet · mint on ink) ── */
+.aurora {
+  background-image:
+    radial-gradient(52% 62% at 22% 8%, rgba(255, 79, 160, 0.34), transparent 62%),
+    radial-gradient(50% 58% at 84% 24%, rgba(138, 75, 216, 0.3), transparent 60%),
+    radial-gradient(46% 55% at 60% 100%, rgba(127, 217, 204, 0.24), transparent 62%);
+  will-change: transform, opacity;
+}
+.aurora-drift {
+  animation: aurora-drift 16s ease-in-out infinite;
+}
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.04);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(0, -2.5%, 0) scale(1.12);
+    opacity: 1;
+  }
+}
+
+/* ── Section-scoped film grain ── */
+.grain-local {
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Marquee tracks ── */
+.marquee-track {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  will-change: transform;
+}
+.marquee-left {
+  animation: marquee-left 38s linear infinite;
+}
+.marquee-right {
+  animation: marquee-right 38s linear infinite;
+}
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ── Hero scroll cue ── */
+.scroll-cue {
+  animation: scroll-cue 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  55%,
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+/* ── reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .preloader-overlay {
+    display: none !important;
+  }
+  .shimmer {
+    animation: none !important;
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+  }
+  .gap-pulse,
+  .twin-wave,
+  .aurora-drift {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
