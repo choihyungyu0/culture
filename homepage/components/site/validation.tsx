@@ -47,6 +47,45 @@ export function Validation() {
             </Reveal>
           ))}
         </div>
+
+        {/* key empirical findings (국민문화예술활동조사 실증) */}
+        <div className="mt-16">
+          <Reveal>
+            <span className="kicker text-mint">{validation.findings.kicker}</span>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <p className="mt-3 max-w-xl text-lg leading-relaxed text-white/70">
+              {validation.findings.lead}
+            </p>
+          </Reveal>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {validation.findings.items.map((f, i) => (
+              <Reveal key={f.title} delay={i * 0.08}>
+                <div className="flex h-full flex-col rounded-2xl border border-mint/20 bg-mint/[0.04] p-7">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display text-4xl font-bold tracking-tight text-mint">
+                      {f.stat}
+                    </span>
+                    <span className="font-mono text-xs text-white/40">
+                      {f.unit}
+                    </span>
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold tracking-tight">
+                    {f.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-white/65">
+                    {f.desc}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal>
+            <p className="mt-6 text-xs leading-relaxed text-white/40">
+              {validation.findings.note}
+            </p>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
