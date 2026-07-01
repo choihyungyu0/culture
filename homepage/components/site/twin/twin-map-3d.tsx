@@ -32,6 +32,7 @@ export function TwinMap3D() {
   const markersRef = useRef<Record<string, { marker: any; pin: any }>>({});
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [errMsg, setErrMsg] = useState("");
+  const flownRef = useRef(false); // 첫 렌더는 전국(KOREA) 뷰 유지, 선택 시에만 카메라 이동
 
   // build map once
   useEffect(() => {
@@ -135,6 +136,10 @@ export function TwinMap3D() {
     const map = mapRef.current;
     const g = GEO[selectedCode];
     if (!map || !g || status !== "ready") return;
+    if (!flownRef.current) {
+      flownRef.current = true;
+      return;
+    }
     try {
       map.flyCameraTo({
         endCamera: {

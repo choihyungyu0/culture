@@ -61,6 +61,7 @@ export function TwinMapStreet() {
     Record<string, { marker: MLMarker; inner: HTMLDivElement }>
   >({});
   const [ready, setReady] = useState(false);
+  const flownRef = useRef(false); // 첫 렌더는 전국 뷰 유지, 사용자 선택 시에만 flyTo
 
   // init map + markers once
   useEffect(() => {
@@ -84,6 +85,9 @@ export function TwinMapStreet() {
       const el = document.createElement("div");
       el.style.cursor = "pointer";
       el.style.position = "relative";
+      el.setAttribute("data-code", r.code);
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", `${r.name} 지도에서 선택`);
       const inner = document.createElement("div");
       inner.style.borderRadius = "9999px";
       inner.style.pointerEvents = "none";
@@ -138,15 +142,20 @@ export function TwinMapStreet() {
     }
   }, [ready, mode, selectedCode, addInstructors, addPrograms, reduced]);
 
-  // fly to selected region
+  // fly to selected region — 단, 첫 렌더는 전국 뷰(초기 center/zoom)를 유지해
+  // 17개 마커가 각자 실제 도시에 얹힌 전국 그림을 먼저 보여준다.
   useEffect(() => {
     if (!ready || !mapRef.current) return;
+    if (!flownRef.current) {
+      flownRef.current = true;
+      return;
+    }
     const g = GEO[selectedCode];
     if (!g) return;
     mapRef.current.flyTo({
       center: [g.lng, g.lat],
-      zoom: 8,
-      duration: reduced ? 0 : 1400,
+      zoom: 7,
+      duration: reduced ? 0 : 1200,
     });
   }, [ready, selectedCode, reduced]);
 
